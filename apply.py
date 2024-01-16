@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 import keyboard
 import time
 import os
@@ -79,20 +80,18 @@ def makeApplications():
     jobList = driver.find_element(By.CLASS_NAME, "scaffold-layout__list-container")
 
     actions = ActionChains(driver)
-
-    actions.move_to_element(jobList)
-
-    actions.move_by_offset(100, 0)
-    actions.move_by_offset(200, 0)
     
-    actions.click()
-    
-    actions.perform
+    scrollOrigin = ScrollOrigin.from_element(jobList, 0, -50)
+
+    actions.scroll_from_origin(scrollOrigin, 0, 10000).perform()
 
     jobs = jobList.find_elements(By.XPATH, "*")
 
-    for job in jobs:
-        print(job)
+    ezApply = driver.find_element(By.CLASS_NAME, "job-card-list__icon")
+    print(ezApply)
+    # for job in jobs:
+    #     if ezApply:
+    #         print(job)
 
     time.sleep(100)
 
