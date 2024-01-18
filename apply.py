@@ -1,49 +1,93 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
+from selenium.common.exceptions import NoSuchElementException
+import pyautogui
 import keyboard
+import json
 import time
 import os
 
-env_path = "./.env"
-ex_path = "./.env.example"
+env_path = "./env.json"
+ex_path = "./env.example.json"
 
 env = {}
 
+
+def applyFunct(driver):
+    applyButton = None
+
+    def checkingErrors():
+        try:
+            driver.find_element(By.CLASS_NAME, "artdeco-inline-feedback--error")
+            pyautogui.alert("Check all the questions and then click Ok!")
+        except NoSuchElementException:
+            print("Can't found errors in form...")
+
+    def nextOffer():
+        pyautogui.scroll(-120)
+        pyautogui.click()
+        time.sleep(5)
+        applyFunct(driver)
+
+    def exitingModal():
+        time.sleep(5)
+        pyautogui.moveTo(543, 352, 1)
+        pyautogui.click()
+        time.sleep(5)
+        nextOffer()
+
+    def jumpingModal():
+        checkingErrors()
+        try:
+            driver.find_element(By.CLASS_NAME, "jpac-modal-header")
+            exitingModal()
+        except NoSuchElementException:
+            print("Application finished")
+        # jpac-modal-header
+
+        try:
+            time.sleep(3)
+            driver.find_element(By.CLASS_NAME, "artdeco-button--primary").click()
+            time.sleep(2)
+            jumpingModal()
+        except NoSuchElementException:
+            print("exiting modal")
+            exitingModal()
+        exitingModal()
+
+    try:
+        applyButton = driver.find_element(By.CLASS_NAME, "jobs-apply-button")
+    except NoSuchElementException:
+        nextOffer()
+
+    try:
+        driver.find_element(By.CLASS_NAME, "artdeco-button__icon--in-bug")
+        applyButton.click()
+        time.sleep(2)
+        jumpingModal()
+    except NoSuchElementException:
+        nextOffer()
 
 def makeApplications():
     global env_path
     global ex_path
     global env
 
-    def getVariables(content):
-        for line_number, line in enumerate(content, start=1):
-            stripped_line = line.strip()
-            if "=" in stripped_line:
-                name, value = stripped_line.split("=", 1)
-                env[name] = value
-            else:
-                print(
-                    f"Error en la línea {line_number}: '{line.strip()}' no contiene un '=' o tiene un formato incorrecto."
-                )
-        return env
-
     if os.path.exists(env_path):
         with open(env_path, "r") as file:
-            content = file.readlines()
-            getVariables(content)
+            env = json.load(file)
     else:
         with open(ex_path, "r") as file_example:
-            ex_content = file_example.read()
+            ex_content = json.load(file_example)
             with open(env_path, "w") as env_file:
-                env_file.write(ex_content)
+                json.dump(ex_content, env_file)
 
         with open(env_path, "r") as env_file:
-            content = env_file.readlines()
-            getVariables(content)
+            env = json.load(env_file)
 
     driver = webdriver.Chrome()
+
+    driver.maximize_window()
 
     driver.get("https://www.linkedin.com/")
 
@@ -62,7 +106,13 @@ def makeApplications():
 
     submitBtn.click()
 
-    time.sleep(5)
+    time.sleep(2)
+
+    try:
+        driver.find_element(By.CLASS_NAME, "nav__button__muted--signin")
+        pyautogui.alert("Check all the verify section and then click Ok!")
+    except NoSuchElementException:
+        print("Verify page not found! :D")
 
     driver.get("https://www.linkedin.com/jobs")
 
@@ -77,21 +127,11 @@ def makeApplications():
     keyboard.press("enter")
     time.sleep(5)
 
-    jobList = driver.find_element(By.CLASS_NAME, "scaffold-layout__list-container")
+    pyautogui.moveTo(593, 352, 1)
 
-    actions = ActionChains(driver)
-    
-    scrollOrigin = ScrollOrigin.from_element(jobList, 0, -50)
+    pyautogui.click()
 
-    actions.scroll_from_origin(scrollOrigin, 0, 10000).perform()
-
-    jobs = jobList.find_elements(By.XPATH, "*")
-
-    ezApply = driver.find_element(By.CLASS_NAME, "job-card-list__icon")
-    print(ezApply)
-    # for job in jobs:
-    #     if ezApply:
-    #         print(job)
+    applyFunct(driver)
 
     time.sleep(100)
 
