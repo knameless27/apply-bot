@@ -20,7 +20,7 @@ Make sure you have the Chrome WebDriver installed on your machine. You can downl
 
 Execute the Apply Bot by running the following command:
 
-- python apply_bot.py
+- python main.py
 
 The bot will launch the Chrome browser, navigate to the specified job application website, and fill in the required details using the information provided in the env.json file.
 
