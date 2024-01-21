@@ -10,7 +10,6 @@ class AppGUI:
         self.bg = "#e0e0e0"
         self.window = tk.Tk()
         self.window.title("Apply Bot")
-        self.window.geometry("480x200")
         self.window.resizable(False, False)
         self.window.configure(bg=self.bg)
 
@@ -60,12 +59,12 @@ class AppGUI:
 
         self.boton.grid(row=3, column=0, columnspan=4, pady=10)
 
-        self.getEnv("first-time")
+        self.getEnv()
 
-    def getEnv(self, executionTime):
+    def getEnv(self):
         self.env = load_env({})
 
-        if self.env and executionTime != "first-time":
+        if self.env:
             self.entry_name.delete(0, tk.END)
             self.entry_name.insert(0, self.env["NAME"])
 
@@ -85,10 +84,9 @@ class AppGUI:
             self.entry_sites.insert(0, self.env["SITES"][0])
 
     def makeEnv(self):
-        self.getEnv()
         data = self.obtener_datos()
         self.env = load_env(data)
-        # self.ba.makeApplications(self.env)
+        self.ba.makeApplications(self.env)
 
     def obtener_datos(self):
         data = {
