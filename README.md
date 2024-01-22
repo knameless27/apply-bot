@@ -22,7 +22,7 @@ Execute the Apply Bot by running the following command:
 
 - python main.py
 
-The bot will launch the Chrome browser, navigate to the specified job application website, and fill in the required details using the information provided in the env.json file.
+The bot will launch the Chrome browser, navigate to the specified job application website.
 
 Note: Ensure that you have Python installed on your machine.
 ## Support
