@@ -1,16 +1,20 @@
 from appGui import AppGUI
 from pyautogui import alert
+
+
 def main():
     gui = AppGUI()
     gui.startApp()
 
+
 if __name__ == "__main__":
     try:
         main()
-    except:
-        alert("An unexpected error has occurred!")
+    except FileNotFoundError as e:
+        alert(f"Error: {e}. File not found.")
+    except Exception as e:
+        alert(f"An unexpected error has occurred: {e}")
     finally:
         exit()
 
 exit()
-# makeApplications()

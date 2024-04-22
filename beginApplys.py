@@ -3,14 +3,17 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from apply import Apply
+from modifyCv import ModifyCv
 import pyautogui
 import keyboard
 import time
 
+
 class BeginApply:
     def __init__(self):
         self.apply = Apply()
-
+        self.modifyCv = ModifyCv()
+        
     def makeApplications(self, env):
         driver = webdriver.Chrome()
 
@@ -49,7 +52,7 @@ class BeginApply:
             By.CLASS_NAME, "jobs-search-box__keyboard-text-input"
         )
 
-        app_input.send_keys(env["POSITIONS"][0])
+        app_input.send_keys(env["POSITIONS"][0])  # poner esta vaina entre comillas
         time.sleep(2)
         keyboard.press("enter")
         time.sleep(5)

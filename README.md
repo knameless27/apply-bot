@@ -1,6 +1,8 @@
 
 # Apply Bot
 
+## remember to create your cv with the name cv.docx into the folder named cv to generate an cv.
+
 Apply Bot is a Python application designed to simplify the job application (Only linkedin for now) process by automating repetitive tasks. This bot leverages the power of Selenium and Chrome WebDriver to navigate through job application websites and fill in your information. Follow the instructions below to get started:
 
 

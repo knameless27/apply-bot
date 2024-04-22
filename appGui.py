@@ -2,11 +2,12 @@ import tkinter as tk
 from tkinter import ttk
 from config import load_env
 from beginApplys import BeginApply
-
+from modifyCv import ModifyCv
 
 class AppGUI:
     def __init__(self):
         self.ba = BeginApply()
+        self.modifyCv = ModifyCv()
         self.bg = "#e0e0e0"
         self.window = tk.Tk()
         self.window.title("Apply Bot")
@@ -33,6 +34,9 @@ class AppGUI:
         self.options = ["Linkedin", "Indeed"]
         self.entry_sites = ttk.Combobox(self.window, values=self.options)
 
+        self.tag_rt = self.crear_label("replaced text:")
+        self.entry_rt = self.crear_text()
+
         # Botón para obtener los datos
         self.boton = tk.Button(
             self.window, text="Start Bot", command=self.makeEnv, height=2, width=50
@@ -57,7 +61,10 @@ class AppGUI:
         self.tag_sites.grid(row=2, column=2, padx=10, pady=10, sticky="e")
         self.entry_sites.grid(row=2, column=3, padx=10, pady=10)
 
-        self.boton.grid(row=3, column=0, columnspan=4, pady=10)
+        self.tag_rt.grid(row=3, column=0, padx=10, pady=10, sticky="e")
+        self.entry_rt.grid(row=3, column=1, columnspan=3, pady=10)
+
+        self.boton.grid(row=4, column=0, columnspan=4, pady=10)
 
         self.getEnv()
 
@@ -83,9 +90,13 @@ class AppGUI:
             self.entry_sites.delete(0, tk.END)
             self.entry_sites.insert(0, self.env["SITES"][0])
 
+            self.entry_rt.delete("1.0", tk.END)
+            self.entry_rt.insert("1.0", self.env["REPLACED_TEXT"])
+
     def makeEnv(self):
         data = self.obtener_datos()
         self.env = load_env(data)
+        self.modifyCv.generateCv(self.env)
         self.ba.makeApplications(self.env)
 
     def obtener_datos(self):
@@ -96,6 +107,7 @@ class AppGUI:
             "EMAIL": self.entry_email.get(),
             "POSITIONS": [self.entry_positions.get()],
             "SITES": [self.entry_sites.get()],
+            "REPLACED_TEXT": self.entry_rt.get("1.0", "end-1c"),
         }
         return data
 
@@ -104,6 +116,9 @@ class AppGUI:
 
     def crear_entry(self, show=None):
         return tk.Entry(self.window, show=show)
+
+    def crear_text(self, height=3, width=40):
+        return tk.Text(self.window, width=width, height=height)
 
     def startApp(self):
         self.window.mainloop()
